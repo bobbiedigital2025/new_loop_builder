@@ -7,14 +7,15 @@ import { RewardsHub } from '../pages/RewardsHub';
 import { Checkout } from '../pages/Checkout';
 import { AdminPanel } from '../pages/AdminPanel';
 import { Login } from '../pages/Login';
+import NotFound from '../pages/NotFound';
 import { Home, Trophy, Settings, LogOut } from 'lucide-react';
 
 const AppLayout: React.FC = () => {
   return (
     <AuthProvider>
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-transparent">
         {/* Navigation */}
-        <nav className="bg-gradient-to-r from-[#722f37] to-[#8b3a62] text-white shadow-lg">
+        <nav className="bg-gradient-to-r from-[#722f37] to-[#8b3a62] text-white shadow-lg relative z-10">
           <div className="max-w-7xl mx-auto px-6 py-4">
             <div className="flex items-center justify-between">
               <Link to="/dashboard" className="text-2xl font-bold flex items-center gap-2">
@@ -41,18 +42,21 @@ const AppLayout: React.FC = () => {
         </nav>
 
         {/* Routes */}
-        <Routes>
-          <Route path="/" element={<Navigate to="/dashboard" replace />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/loop" element={<LoopPage />} />
-          <Route path="/rewards" element={<RewardsHub />} />
-          <Route path="/checkout" element={<Checkout />} />
-          <Route path="/admin" element={<AdminPanel />} />
-        </Routes>
+        <div className="relative z-1">
+          <Routes>
+            <Route path="/" element={<Navigate to="/dashboard" replace />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/loop" element={<LoopPage />} />
+            <Route path="/rewards" element={<RewardsHub />} />
+            <Route path="/checkout" element={<Checkout />} />
+            <Route path="/admin" element={<AdminPanel />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </div>
 
         {/* Footer */}
-        <footer className="bg-gray-900 text-white py-8 mt-12">
+        <footer className="bg-gray-900 text-white py-8 mt-12 relative z-10">
           <div className="max-w-7xl mx-auto px-6 text-center">
             <p className="text-sm opacity-75">
               ©2025 Bobbie Gray. BoDiGi™, Aura™, and Boltz™ are trademarks of Bobbie Digital™.
