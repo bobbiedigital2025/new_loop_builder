@@ -1,7 +1,7 @@
 import React, { createContext, useContext } from 'react';
 
 interface AuthContextType {
-  user: any | null;
+  user: unknown | null;
   loading: boolean;
 }
 

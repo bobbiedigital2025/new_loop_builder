@@ -68,5 +68,75 @@
   body {
     @apply bg-background text-foreground;
     font-family: 'Inter', sans-serif;
+    color: #4b0082; /* Deep purple for text */
   }
+}
+
+/* Animated gradient background with mint green and yellow */
+@keyframes gradientFlow {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes granulateMove {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(30px, -30px) scale(1.1);
+  }
+  66% {
+    transform: translate(-20px, 20px) scale(0.9);
+  }
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+}
+
+.animated-gradient-bg {
+  position: absolute;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    45deg,
+    #98ff98 0%,    /* Mint green */
+    #ffff99 25%,   /* Yellow */
+    #98ff98 50%,   /* Mint green */
+    #ffff99 75%,   /* Yellow */
+    #98ff98 100%   /* Mint green */
+  );
+  background-size: 400% 400%;
+  animation: gradientFlow 15s ease infinite, granulateMove 20s ease-in-out infinite;
+  opacity: 0.3;
+  filter: blur(2px);
+}
+
+/* Light colored boxes for text sections */
+.text-box {
+  background: rgba(255, 255, 255, 0.85);
+  border: 2px solid rgba(152, 255, 152, 0.4); /* Light mint green border */
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 6px rgba(75, 0, 130, 0.1);
+  backdrop-filter: blur(10px);
+  position: relative;
+  z-index: 1;
+}
+
+.text-box-alt {
+  background: rgba(255, 255, 255, 0.9);
+  border: 2px solid rgba(255, 255, 153, 0.4); /* Light yellow border */
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 6px rgba(75, 0, 130, 0.1);
+  backdrop-filter: blur(10px);
+  position: relative;
+  z-index: 1;
 }
