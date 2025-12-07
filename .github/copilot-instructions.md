@@ -162,8 +162,8 @@ All environment variables use `VITE_` prefix for Vite exposure:
 ## Branding & Tone
 - **Brand**: BoDiGi™ (Bobbie Digital™)
 - **AI Agents**: 
-  - Aura (Teacher) - Celebratory, encouraging tone
-  - Boltz (Coach) - Practical, conversion-focused tone
+  - Aura™ (Teacher) - Celebratory, encouraging tone
+  - Boltz™ (Coach) - Practical, conversion-focused tone
 - **Colors**: Maroon/burgundy primary, purple secondary, gold accent
 - **Copy Style**: Professional yet approachable, gamified language
 
