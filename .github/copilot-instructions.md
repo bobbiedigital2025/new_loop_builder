@@ -21,12 +21,16 @@ This is a gamified, conversion-driven learning platform called BoDiGi™ Learn &
 ```
 /src
   /components
-    /ui              # shadcn/ui reusable components
-    AppLayout.tsx    # Main layout wrapper
-    ProgressBar.tsx  # Progress tracking UI
-  App.tsx            # Main application component
-  main.tsx           # Application entry point
-/public              # Static assets
+    /ui                  # shadcn/ui reusable components
+    AppLayout.tsx        # Main layout wrapper
+    ProgressBar.tsx      # Progress tracking UI
+    QuestionCard.tsx     # Question display component
+    RewardCard.tsx       # Reward display component
+    SubscribeModal.tsx   # Subscribe gate modal
+    theme-provider.tsx   # Theme provider component
+  App.tsx                # Main application component
+  main.tsx               # Application entry point
+/public                  # Static assets
 ```
 
 ## Development Commands
@@ -57,7 +61,8 @@ This is a gamified, conversion-driven learning platform called BoDiGi™ Learn &
 - Follow mobile-first responsive design
 - Use shadcn/ui components from `/src/components/ui`
 - Maintain consistent spacing with Tailwind spacing scale
-- Use CSS variables for theme colors (defined in CSS)
+- Use Tailwind's theme configuration for brand colors
+- Custom styles can be added to `src/App.css` when necessary
 
 ### Code Organization
 - Keep files focused and under 300 lines when possible
@@ -157,8 +162,8 @@ All environment variables use `VITE_` prefix for Vite exposure:
 ## Branding & Tone
 - **Brand**: BoDiGi™ (Bobbie Digital™)
 - **AI Agents**: 
-  - Aura™ (Teacher) - Celebratory, encouraging tone
-  - Boltz™ (Coach) - Practical, conversion-focused tone
+  - Aura (Teacher) - Celebratory, encouraging tone
+  - Boltz (Coach) - Practical, conversion-focused tone
 - **Colors**: Maroon/burgundy primary, purple secondary, gold accent
 - **Copy Style**: Professional yet approachable, gamified language
 
