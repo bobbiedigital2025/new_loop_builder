@@ -8,7 +8,7 @@ This is a gamified, conversion-driven learning platform called BoDiGi™ Learn &
 
 - **Frontend Framework**: React 18 with TypeScript
 - **Build Tool**: Vite
-- **Styling**: Tailwind CSS with shadcn/ui components
+- **Styling**: Tailwind CSS with shadcn/ui components, custom styles in App.css
 - **Backend**: Supabase (PostgreSQL, Auth, Real-time)
 - **Routing**: React Router v6
 - **State Management**: React hooks and context
@@ -37,7 +37,7 @@ This is a gamified, conversion-driven learning platform called BoDiGi™ Learn &
 
 - **Start dev server**: `npm run dev` (runs on http://localhost:5173)
 - **Build for production**: `npm run build`
-- **Build for development**: `npm run build:dev`
+- **Build for development**: `npm run build:dev` (creates development build with source maps)
 - **Lint code**: `npm run lint`
 - **Preview production build**: `npm run preview`
 
