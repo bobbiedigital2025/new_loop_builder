@@ -7,7 +7,7 @@ import { RewardsHub } from '../pages/RewardsHub';
 import { Checkout } from '../pages/Checkout';
 import { AdminPanel } from '../pages/AdminPanel';
 import { Login } from '../pages/Login';
-import { Home, Trophy, Settings, LogOut } from 'lucide-react';
+import { Home, Trophy, Settings } from 'lucide-react';
 
 const AppLayout: React.FC = () => {
   return (
