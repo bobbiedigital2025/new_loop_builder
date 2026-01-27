@@ -82,7 +82,12 @@ Every push to `main` branch will automatically deploy.
 
 **Supabase connection fails**: Verify environment variables are set correctly
 
-**Routes not working**: Ensure `vercel.json` or `_redirects` file is present for SPA routing
+**Routes not working (404 errors)**: This project includes SPA routing configuration files:
+- `vercel.json` for Vercel deployments
+- `public/_redirects` for Netlify deployments
+- `netlify.toml` for Netlify (alternative format)
+
+These files ensure all routes serve `index.html` for client-side routing.
 
 **Images not loading**: Check that image URLs are accessible
 
