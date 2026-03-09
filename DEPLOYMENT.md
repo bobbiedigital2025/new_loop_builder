@@ -163,7 +163,23 @@ You can also trigger a deploy manually from **Actions → Deploy to GitHub Pages
 1. Connect GitHub repo
 2. Build command: `npm run build`
 3. Publish directory: `dist`
-4. Add environment variables (leave `VITE_BASE_PATH` empty)
+4. Add environment variables (leave `VITE_BASE_PATH` **empty** — Netlify serves from the root `/`)
+
+**SPA routing** on Netlify is handled by `public/_redirects` (copied to `dist/` automatically
+during build).  The file contains a single catch-all rule:
+
+```
+/* /index.html 200
+```
+
+This ensures client-side routes (e.g. `/admin`, `/quiz/1`) return `index.html` on a hard
+refresh instead of a 404.
+
+> **Base path difference**
+> | Platform | `VITE_BASE_PATH` | SPA fallback mechanism |
+> |---|---|---|
+> | GitHub Pages | `/<repo-name>/` (set by the workflow) | `public/404.html` redirect trick |
+> | Netlify | _(empty — defaults to `/`)_ | `public/_redirects` catch-all rule |
 
 ---
 
