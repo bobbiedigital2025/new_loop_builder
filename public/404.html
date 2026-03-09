@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>BoDiGi Earn &amp; Learn Builder</title>
+    <!--
+      Single-page app routing on GitHub Pages.
+
+      GitHub Pages returns 404 for any URL that doesn't map to a real file, so
+      we use this page to capture those requests, encode the path into a query
+      string, and redirect to index.html where the SPA router takes over.
+
+      Based on the technique at https://github.com/rafgraph/spa-github-pages
+    -->
+    <script>
+      // Determine how many path segments to keep as the "repo root" prefix.
+      // For a project page (username.github.io/repo) this is 1.
+      // For an organisation/user root page (username.github.io) set to 0.
+      var pathSegmentsToKeep = 1;
+
+      var l = window.location;
+      l.replace(
+        l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') +
+        // Ampersands in the original URL are replaced with '~and~' so they
+      // don't get confused with query string delimiters during the redirect.
+      // The companion script in index.html reverses this substitution.
+      l.pathname.split('/').slice(0, 1 + pathSegmentsToKeep).join('/') +
+        '/?/' +
+        l.pathname.slice(1).split('/').slice(pathSegmentsToKeep).join('/').replace(/&/g, '~and~') +
+        (l.search ? '&' + l.search.slice(1).replace(/&/g, '~and~') : '') +
+        l.hash
+      );
+    </script>
+  </head>
+  <body></body>
+</html>
