@@ -1,0 +1,70 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+  # Allow manual trigger from the Actions tab
+  workflow_dispatch:
+
+# Grant GITHUB_TOKEN the permissions required by actions/deploy-pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Only allow one concurrent deployment; cancel in-progress runs for the same
+# branch so stale deployments never overwrite a newer one.
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build project
+        # VITE_BASE_PATH tells Vite (and React Router) to host the app under
+        # /<repo-name>/ which is where GitHub Pages serves project pages.
+        run: npm run build
+        env:
+          VITE_BASE_PATH: /${{ github.event.repository.name }}/
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+          VITE_DEMO_MODE: ${{ vars.VITE_DEMO_MODE || 'true' }}
+          VITE_OWNER_CHECKOUT_URL: ${{ vars.VITE_OWNER_CHECKOUT_URL || '' }}
+          VITE_BRAND_PRIMARY: ${{ vars.VITE_BRAND_PRIMARY || '#722f37' }}
+          VITE_BRAND_SECONDARY: ${{ vars.VITE_BRAND_SECONDARY || '#8b3a62' }}
+          VITE_BRAND_ACCENT: ${{ vars.VITE_BRAND_ACCENT || '#d4af37' }}
+          VITE_INTERNAL_CHECKOUT: ${{ vars.VITE_INTERNAL_CHECKOUT || 'false' }}
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: './dist'
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

@@ -10,13 +10,18 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
+// When deployed to GitHub Pages the app lives under a sub-path such as
+// /new_loop_builder/.  VITE_BASE_PATH must match the `base` in vite.config.ts
+// so that client-side navigation uses the correct prefix.
+const basename = import.meta.env.VITE_BASE_PATH || "/";
+
 const App = () => (
   <ThemeProvider defaultTheme="light">
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <Toaster />
         <Sonner />
-        <BrowserRouter>
+        <BrowserRouter basename={basename}>
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="*" element={<NotFound />} />
