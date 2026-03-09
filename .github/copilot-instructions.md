@@ -1,139 +1,120 @@
 # Copilot Instructions for BoDiGi Learn & Earn Loop Builder
 
 ## Project Overview
-This is a React + TypeScript gamified learning platform with strategic subscribe gates. Users answer 15 questions (5 sets × 3), encounter subscribe modals after each set, and unlock rewards. Built with Vite, Supabase backend, shadcn/ui components, and MCP (Model Context Protocol) server integration.
+This is a React + TypeScript gamified learning platform with strategic subscribe gates. Users answer 15 questions (5 sets × 3), encounter subscribe modals after each set, and unlock rewards. Built with Vite, Supabase backend, shadcn/ui components, and React Query.
 
-## Architecture & Key Concepts
+## Tech Stack
+- **Frontend**: React 18 + TypeScript, Vite
+- **UI**: shadcn/ui (Radix UI primitives) + Tailwind CSS
+- **Routing**: React Router v6
+- **Server State**: TanStack React Query v5
+- **Backend**: Supabase (auth + database)
+- **Theming**: next-themes (dark mode support)
 
-### Three-Layer MCP Architecture
-The app integrates MCP servers for extensible tooling:
-- **MCP Servers** (`mcp-servers/src/`): Standalone services with tools for analytics, game config, and user data
-- **MCP Client** (`src/lib/mcp-client.ts`): HTTP client communicating with servers
-- **React Hooks** (`src/hooks/useMCP.ts`): `useMCPClient`, `useMCPRegistry`, `useMCPTool` for component integration
+## Development Workflow
 
-MCP servers run via stdio transport using `@modelcontextprotocol/sdk`. Tools are prefixed by domain: `analytics_*`, `game_config_*`, `user_data_*`.
-
-### Environment Configuration Pattern
-All env vars are validated at app startup in `src/config/env.ts`. The module throws errors for missing/invalid variables before React renders. Always add new env vars to:
-1. `src/config/env.ts` (validation logic)
-2. `.env.example` (developer template)
-3. `DEPLOYMENT.md` (production checklist)
-
-### Security-First Approach
-- **CSP Headers**: Set in `index.html` meta tags; only allow same-origin and Supabase domains
-- **Input Sanitization**: Use `src/lib/security.ts` functions (`sanitizeHtml`, `isSafeUrl`) for all user-generated content
-- **Build Hardening**: Production builds strip console logs, disable source maps, and mangle code (see `vite.config.ts`)
-- **ESLint Rules**: Enforce `no-eval`, `no-implied-eval`, ban `any` types, and require `const` over `let`
-
-## Development Wu
-orkflould## Quick Start Commands
+### Quick Start Commands
 ```bash
 npm run dev          # Vite dev server on localhost:5173
-npm run build        # Production build with hardening
-npm run check        # Type-check + lint + security audit (run before commits)
-npm run lint:fix     # Auto-fix linting issues
+npm run build        # Production build
+npm run lint         # Run ESLint
+npm run preview      # Preview production build locally
 ```
-
-### MCP Server Development
-```bash
-cd mcp-servers
-npm run dev          # Starts MCP server with hot reload
-```
-Test MCP connections via `src/components/MCPDemoComponent.tsx` or `useMCPRegistry` hook.
 
 ### Pre-Deployment Checklist
-Always run `npm run check` before deploying. See `DEPLOYMENT.md` for full production checklist including:
-- Supabase schema setup (`supabase/schema.sql` - NOTE: file not in repo yet, referenced in README)
-- Environment variable validation
+Always run `npm run lint` and `npm run build` before deploying. See `DEPLOYMENT.md` for the full production checklist including:
+- Supabase schema setup
+- Environment variable configuration
 - Security header verification
+
+## Environment Variables
+All environment variables are prefixed with `VITE_` and accessed via `import.meta.env`. Copy `.env.example` to `.env.local` to get started. Key variables:
+
+| Variable | Purpose |
+|---|---|
+| `VITE_SUPABASE_URL` | Supabase project URL |
+| `VITE_SUPABASE_ANON_KEY` | Supabase anonymous key |
+| `VITE_DEMO_MODE` | `true` to bypass auth and seed demo data |
+| `VITE_OWNER_CHECKOUT_URL` | External checkout redirect URL |
+| `VITE_BRAND_PRIMARY` | Hex color for primary brand (e.g. `#722f37`) |
+| `VITE_BRAND_SECONDARY` | Hex color for secondary brand |
+| `VITE_BRAND_ACCENT` | Hex color for accent |
+| `VITE_INTERNAL_CHECKOUT` | `true` to use internal mock checkout |
+| `VITE_BASE_PATH` | Sub-path for GitHub Pages (e.g. `/new_loop_builder/`) |
+
+When adding new environment variables, always update `.env.example` and `DEPLOYMENT.md`.
+
+## Project Structure
+```
+src/
+  App.tsx              # Root: Router, QueryClient, ThemeProvider setup
+  main.tsx             # Entry point
+  pages/
+    Index.tsx          # Landing / home page
+    NotFound.tsx       # 404 page
+  components/
+    ui/                # shadcn/ui components — never edit manually
+    AppLayout.tsx      # Shared layout wrapper
+    ProgressBar.tsx    # Question set progress indicator
+    QuestionCard.tsx   # Individual question display
+    RewardCard.tsx     # Reward unlock display
+    SubscribeModal.tsx # Subscribe gate modal (shown after each set)
+    theme-provider.tsx # next-themes wrapper
+  hooks/
+    use-toast.ts       # Toast notification hook
+  lib/
+    utils.ts           # Tailwind cn() helper and misc utilities
+```
 
 ## Code Conventions
 
 ### Component Patterns
 - **UI Components**: All in `src/components/ui/` (shadcn/ui managed). Never manually edit; use `npx shadcn@latest add <component>`
 - **Path Aliases**: Use `@/` for imports (resolves to `src/`). Example: `import { Button } from "@/components/ui/button"`
-- **Error Boundaries**: `ErrorBoundary` wraps the entire app in `App.tsx`. Catch-and-display pattern for production errors
-- **Theme Provider**: Uses `next-themes` for dark mode. Wrap components needing theme in `ThemeProvider`
+- **Theme Provider**: Uses `next-themes` for dark mode. `ThemeProvider` is set in `App.tsx` with `defaultTheme="light"`
 
-### TypeScript Strictness
-- No `any` types allowed (ESLint enforces)
-- All env vars typed in `src/config/env.ts` via `EnvironmentConfig` interface
-- React component return types must be explicit: `(): React.ReactElement`
+### TypeScript
+- Avoid `any` types
+- Use explicit `React.FC` or `React.FC<Props>` for component types
+- Access env vars via `import.meta.env.VITE_*` (typed as `string | undefined`)
 
 ### State Management
-- **React Query**: For server state (Supabase queries). Configure in `App.tsx` with retry=1, no window refocus
-- **useState/useCallback**: For local component state
-- **MCP Hooks**: For MCP tool calls (`useMCPTool` returns `{ result, loading, error, callTool }`)
+- **React Query**: For server state (Supabase queries). `QueryClient` is configured in `App.tsx`
+- **useState / useCallback**: For local component state
 
-## Integration Points
+### Routing
+- Routes are defined in `App.tsx` using React Router v6 `<Routes>` / `<Route>`
+- `basename` is set from `VITE_BASE_PATH` for GitHub Pages sub-path support
+- Add new pages in `src/pages/` and register them in `App.tsx`
 
-### Supabase
-- Client initialized in (implied location, not seen but standard pattern)
-- Schema includes: `users`, `app_profiles`, `loops`, `questions`, `rewards`, `progress`, `transactions`
-- Auth supports email/password and Google OAuth
-- Demo mode bypasses auth when `VITE_DEMO_MODE=true`
-
-### External Services
-- **Checkout**: Supports internal mock checkout or external URL redirect via `VITE_OWNER_CHECKOUT_URL`
-- **MCP Servers**: Can run locally (dev) or as separate services (production). Configure in `mcp.config.json`
-
-## Project-Specific Gotchas
-
-### Demo Mode Toggle
-Demo mode affects auth, data seeding, and subscribe gates. Always check `config.demoMode` from `src/config/env.ts`. Never hardcode demo checks.
+## Key Application Logic
 
 ### Subscribe Gate Flow
-After every 3rd question, modal appears. Two outcomes:
-- **YES**: Redirect to `config.ownerCheckoutUrl` or internal checkout
-- **NO**: Continue to next set
-Track last prompted set to avoid duplicate modals.
+After every 3rd question (end of each set), `SubscribeModal` appears with two outcomes:
+- **Subscribe**: Redirect to `VITE_OWNER_CHECKOUT_URL` or internal checkout
+- **Skip**: Continue to next question set
+Track the last prompted set index to avoid showing the modal twice.
 
 ### Reward Unlock Logic
-Rewards unlock based on set completion + score thresholds. Unlocked state stored in `progress` table. Use reward status checks before displaying "Claim" buttons.
+Rewards unlock based on set completion and score thresholds. Display "Claim" buttons only after confirming reward unlock status.
 
 ### Brand Customization
-Brand colors are env vars (`VITE_BRAND_PRIMARY/SECONDARY/ACCENT`). Colors validated as hex in `src/config/env.ts`. Apply via CSS variables or Tailwind theme extension.
+Brand colors come from env vars (`VITE_BRAND_PRIMARY`, `VITE_BRAND_SECONDARY`, `VITE_BRAND_ACCENT`). Apply them as inline styles or Tailwind arbitrary values (e.g. `bg-[#722f37]`).
 
-## Testing & Validation
-
-### MCP Tool Testing
-Use `src/components/MCPDemoComponent.tsx` to test tools interactively. Registry auto-tests connections on mount via `useMCPRegistry`.
-
-### Build Validation
-Production builds must pass:
-1. `npm run type-check` (no TypeScript errors)
-2. `npm run lint` (no ESLint errors)
-3. `npm run audit` (no critical vulnerabilities)
-4. Build size should be <500KB for main bundle (check `dist/` output)
-
-### Security Testing
-- Run `npm audit` regularly
-- Verify CSP headers in browser DevTools (Network tab)
-- Test XSS by injecting `<script>` tags in user inputs (should be sanitized)
-
-## Key Files Reference
-
-- `src/config/env.ts` - Environment validation (modify for new env vars)
-- `vite.config.ts` - Build config, chunk splitting, security headers
-- `src/lib/mcp-client.ts` - MCP HTTP client (extend for new transports)
-- `src/hooks/useMCP.ts` - MCP React integration (add hooks for new tool types)
-- `mcp-servers/src/index.ts` - MCP server entry point (register new tools here)
-- `DEPLOYMENT.md` - Production deployment checklist
-- `FEATURES.md` - Complete feature specifications
-- `MCP_GUIDE.md` - MCP integration deep dive
+### Demo Mode
+When `VITE_DEMO_MODE=true`, the app bypasses Supabase auth and seeds demo data. Check `import.meta.env.VITE_DEMO_MODE` — never hardcode demo logic.
 
 ## When Adding Features
 
-1. **New Environment Variables**: Add to `env.ts` validation, `.env.example`, and docs
-2. **New UI Components**: Use `npx shadcn@latest add <component>`, never copy/paste
-3. **New MCP Tools**: Create in `mcp-servers/src/tools/`, register in `index.ts`, add hook to `useMCP.ts`
-4. **New Pages/Routes**: Add to `App.tsx` routes, create in `src/pages/`
-5. **Security-Sensitive Code**: Use `security.ts` utilities, add CSP exceptions if needed
+1. **New UI Components**: Use `npx shadcn@latest add <component>`, never copy/paste from Radix
+2. **New Pages/Routes**: Create in `src/pages/`, register in `App.tsx`
+3. **New Environment Variables**: Add to `.env.example` and `DEPLOYMENT.md`
+4. **Supabase Queries**: Use React Query (`useQuery`/`useMutation`) to wrap Supabase client calls
 
 ## Common Tasks
 
 **Add a shadcn component**: `npx shadcn@latest add dialog`  
-**Test MCP connection**: Check `MCPDemoComponent` or run `useMCPRegistry().testConnections()`  
-**Deploy to Vercel**: Push to GitHub, import in Vercel, add env vars from `.env.example`  
-**Debug env issues**: Check browser console on app load; `env.ts` errors appear immediately  
-**Update Supabase schema**: Edit `supabase/schema.sql`, run in Supabase SQL Editor (file not committed to repo)
+**Deploy to Netlify or Vercel**: Push to `main`; workflows in `.github/workflows/` handle it automatically  
+**Deploy to GitHub Pages**: Push to `main`; set `VITE_BASE_PATH=/<repo-name>/` in the Pages environment  
+**Debug env issues**: Missing `VITE_SUPABASE_URL` or `VITE_SUPABASE_ANON_KEY` will cause Supabase calls to fail silently in demo mode  
+**Update Supabase schema**: Run SQL in the Supabase SQL Editor (schema file not committed to repo)
